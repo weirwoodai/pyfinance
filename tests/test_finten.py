@@ -4,7 +4,7 @@ import json
 
 @pytest.fixture
 def finten_login():
-  with open("./credentials.json") as f:
+  with open("./.credentials.json") as f:
     finten_login = json.load(f)
   return finten_login
 
