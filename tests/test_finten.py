@@ -1,5 +1,5 @@
 import pytest
-from pyfinance.finten import FinTen, InvalidCredentials
+from pyfinance.finten import FinTen, InvalidCredentials, InvalidQuery
 import json
 import httpretty
 
@@ -67,4 +67,14 @@ def test_get_filings_with_public_login():
 def test_get_prices():
     aapl = FinTen().get_prices(ticker="AAPL")
     assert len(aapl) > 0
+
+
+def test_get_prices_last_year():
+    aapl = FinTen().get_prices(ticker="AAPL", start="2019-01-01", end="2020-01-01")
+    assert len(aapl) == 253
+
+
+def test_unknown_ticker():
+    with pytest.raises(InvalidQuery):
+        FinTen().get_prices(ticker="asdf")
 

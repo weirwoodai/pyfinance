@@ -1,8 +1,13 @@
 import requests
 import pandas as pd
+import yfinance as yf
 
 
 class InvalidCredentials(Exception):
+    pass
+
+
+class InvalidQuery(Exception):
     pass
 
 
@@ -56,6 +61,11 @@ class FinTen:
 
         return pd.DataFrame(response.json()["filings"])
 
-    def get_prices(self, ticker):
-        raise NotImplemented
+    def get_prices(self, ticker, **kwargs):
+
+        df = yf.download(ticker, progress=True, **kwargs)
+
+        if len(df) == 0:
+            raise InvalidQuery
+        return df
 
