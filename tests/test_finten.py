@@ -51,12 +51,12 @@ def test_get_filings_with_public_login():
     httpretty.enable()
     httpretty.register_uri(
         httpretty.GET,
-        "https://finten.weirwood.ai/api/company/filings?ticker=AAPL",
+        "https://finten.weirwood.ai/company/filings?ticker=AAPL",
         body='{"filings": [{"foo": "bar", "manchu": "massachusets"}]}',
     )
     httpretty.register_uri(
         httpretty.POST,
-        "https://finten.weirwood.ai/api/users/login",
+        "https://finten.weirwood.ai/users/login",
         body='{"token": "test"}',
     )
 
@@ -78,3 +78,15 @@ def test_unknown_ticker():
     with pytest.raises(InvalidQuery):
         FinTen().get_prices(ticker="asdf")
 
+
+def test_get_macros(finten_login):
+    finten = FinTen()
+    finten.set_login(**finten_login)
+    available_macros = finten.list_macros()
+    assert available_macros == ["DGORDER", "ACDGNO", "DMOTRC1Q027SBEA", "IPDCONGD"]
+
+    dgorder = finten.get_macro(name="DGORDER")
+    acdgno = finten.get_macro(name="ACDGNO")
+
+    assert dgorder.iloc[0].values[0] == 114535
+    assert acdgno.iloc[0].values[0] == 19863
